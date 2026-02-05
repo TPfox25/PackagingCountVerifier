@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PackagingCountVerifier.MainPage"
+             BackgroundColor="#121212">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="24">
+
+            <!-- APP TITLE -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Packaging Count Verifier"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="White" />
+
+                <Label Text="Count once. Catch mistakes before delivery."
+                       FontSize="14"
+                       TextColor="#B0B0B0"
+                       FontAttributes="Italic"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- JOB DETAILS CARD -->
+            <Frame BackgroundColor="#1E1E1E"
+                   CornerRadius="18"
+                   Padding="20"
+                   HasShadow="False">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Job Details"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+
+                    <!-- JOB NAME -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Job Name"
+                               FontSize="13"
+                               TextColor="#B0B0B0" />
+
+                        <Entry Placeholder="e.g. Party Rally Shirts – Durban"
+                               Text="{Binding JobName}"
+                               FontSize="16"
+                               TextColor="White" />
+                    </VerticalStackLayout>
+
+                    <!-- ITEM TYPE -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Item Type"
+                               FontSize="13"
+                               TextColor="#B0B0B0" />
+
+                        <Picker Title="Select item type"
+                                SelectedItem="{Binding ItemType}">
+                            <Picker.Items>
+                                <x:String>T-Shirts</x:String>
+                                <x:String>Posters</x:String>
+                                <x:String>Flyers</x:String>
+                                <x:String>Other</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </VerticalStackLayout>
+
+                    <!-- EXPECTED TOTAL -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Expected Total Quantity"
+                               FontSize="13"
+                               TextColor="#B0B0B0" />
+
+                        <Entry Placeholder="e.g. 2000"
+                               Keyboard="Numeric"
+                               Text="{Binding ExpectedTotal, Mode=TwoWay}"
+                               FontSize="16"
+                               TextColor="White" />
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- PRIMARY ACTION -->
+            <Button Text="Start Packing"
+                    FontSize="18"
+                    HeightRequest="56"
+                    CornerRadius="14"
+                    BackgroundColor="#7C6DFF"
+                    TextColor="White"
+                    Clicked="OnStartPackingClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

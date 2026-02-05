@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PackagingCountVerifier.VerificationPage"
+             Title="Final Verification"
+             BackgroundColor="#121212">
+
+    <VerticalStackLayout Padding="24" Spacing="24">
+
+        <!-- PAGE TITLE -->
+        <Label Text="Final Verification"
+               FontSize="26"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="Center" />
+
+        <!-- RESULT CARD -->
+        <Frame BackgroundColor="#1E1E1E"
+               CornerRadius="20"
+               Padding="24"
+               HasShadow="False">
+
+            <Label x:Name="ResultLabel"
+                   FontSize="20"
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="Center"
+                   TextColor="White" />
+        </Frame>
+
+        <!-- PRIMARY ACTION: CLOSE APP -->
+        <Button Text="Close App"
+                FontSize="18"
+                HeightRequest="56"
+                CornerRadius="14"
+                BackgroundColor="#7C6DFF"
+                TextColor="White"
+                Clicked="OnCloseAppClicked" />
+
+        <!-- SECONDARY ACTION: RESTART -->
+        <Button Text="Restart Job"
+                FontSize="16"
+                HeightRequest="48"
+                CornerRadius="14"
+                BackgroundColor="#2C2C2C"
+                TextColor="#B0B0B0"
+                Clicked="OnRestartClicked" />
+
+    </VerticalStackLayout>
+</ContentPage>

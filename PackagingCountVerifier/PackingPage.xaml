@@ -84,7 +84,7 @@
 
                     <!-- PRESETS -->
                     <HorizontalStackLayout Spacing="12"
-                        BindableLayout.ItemsSource="{Binding Presets}">
+                                           BindableLayout.ItemsSource="{Binding Presets}">
 
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
@@ -93,23 +93,34 @@
                                         Clicked="OnAddPresetClicked"
                                         BackgroundColor="#7C6DFF"
                                         TextColor="White"
-                                        CornerRadius="14"/>
+                                        CornerRadius="14"
+                                        HeightRequest="44" />
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </HorizontalStackLayout>
 
-                    <!-- MANUAL ENTRY -->
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <!-- MANUAL ENTRY (FIXED) -->
+                    <VerticalStackLayout Spacing="10">
+
+                        <Label Text="Manual Quantity"
+                               FontSize="13"
+                               TextColor="#B0B0B0" />
+
                         <Entry x:Name="ManualQuantityEntry"
-                               Placeholder="Enter quantity"
+                               Placeholder="Enter quantity (e.g. 3)"
                                Keyboard="Numeric"
-                               TextColor="White"/>
+                               TextColor="White"
+                               BackgroundColor="#2A2A2A"
+                               HeightRequest="50" />
 
                         <Button Text="Add"
-                                Clicked="OnAddManualClicked"
+                                HeightRequest="56"
+                                CornerRadius="14"
                                 BackgroundColor="#7C6DFF"
-                                TextColor="White"/>
-                    </Grid>
+                                TextColor="White"
+                                Clicked="OnAddManualClicked" />
+
+                    </VerticalStackLayout>
 
                 </VerticalStackLayout>
             </Frame>

@@ -10,24 +10,28 @@ public partial class PackingPage : ContentPage
     {
         InitializeComponent();
         this.job = job;
-        BindingContext = job; // single source of truth
+        BindingContext = job;
     }
 
-    private async void OnAddItemClicked(object sender, EventArgs e)
+    // ?? Shared logic for adding items
+    private async Task AddItemsAsync(int quantity)
     {
-        job.CurrentBoxCount++;
-        job.PackedTotal++;
+        if (quantity <= 0)
+            return;
 
-        // ?? OVERPACK WARNING
+        job.CurrentBoxCount += quantity;
+        job.PackedTotal += quantity;
+
+        // ?? OVERPACK PROTECTION
         if (job.CurrentBoxCount > job.ItemsPerBox)
         {
             await DisplayAlert(
                 "? Overpacked",
-                "Too many items in this box!\nRemove the extra item before continuing.",
+                "This exceeds the box limit.\nRemove extra items before continuing.",
                 "OK");
 
-            job.CurrentBoxCount--;
-            job.PackedTotal--;
+            job.CurrentBoxCount -= quantity;
+            job.PackedTotal -= quantity;
             return;
         }
 
@@ -45,6 +49,30 @@ public partial class PackingPage : ContentPage
         }
     }
 
+    // ? Preset buttons (+5 / +10 / +20)
+    private async void OnAddPresetClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn &&
+            int.TryParse(btn.CommandParameter?.ToString(), out int qty))
+        {
+            await AddItemsAsync(qty);
+        }
+    }
+
+    // ?? Manual quantity entry
+    private async void OnAddManualClicked(object sender, EventArgs e)
+    {
+        if (!int.TryParse(ManualQuantityEntry.Text, out int qty) || qty <= 0)
+        {
+            await DisplayAlert("Invalid Input", "Enter a valid quantity.", "OK");
+            return;
+        }
+
+        await AddItemsAsync(qty);
+        ManualQuantityEntry.Text = string.Empty;
+    }
+
+    // ? Finish packing
     private async void OnFinishClicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new VerificationPage(job));

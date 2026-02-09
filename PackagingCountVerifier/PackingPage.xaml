@@ -5,93 +5,122 @@
              Title="Live Packing"
              BackgroundColor="#121212">
 
-    <VerticalStackLayout Padding="24" Spacing="24">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="24">
 
-        <!-- PAGE TITLE -->
-        <Label Text="Live Packing"
-               FontSize="26"
-               FontAttributes="Bold"
-               TextColor="White"
-               HorizontalOptions="Center" />
+            <!-- PAGE TITLE -->
+            <Label Text="Live Packing"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center" />
 
-        <!-- CURRENT BOX CARD -->
-        <Frame BackgroundColor="#1E1E1E"
-               CornerRadius="20"
-               Padding="24"
-               HasShadow="False">
-
-            <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-
-                <Label Text="Current Box"
-                       FontSize="14"
-                       TextColor="#B0B0B0"
-                       HorizontalOptions="Center" />
-
-                <Label Text="{Binding CurrentBoxCount}"
-                       FontSize="56"
-                       FontAttributes="Bold"
-                       TextColor="#7C6DFF"
-                       HorizontalOptions="Center" />
-
-            </VerticalStackLayout>
-        </Frame>
-
-        <!-- STATS ROW -->
-        <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-
+            <!-- CURRENT BOX CARD -->
             <Frame BackgroundColor="#1E1E1E"
-                   CornerRadius="16"
-                   Padding="16"
-                   HasShadow="False"
-                   Grid.Column="0">
+                   CornerRadius="20"
+                   Padding="24"
+                   HasShadow="False">
 
-                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
-                    <Label Text="Total Packed"
-                           FontSize="13"
+                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <Label Text="Current Box"
+                           FontSize="14"
                            TextColor="#B0B0B0" />
-                    <Label Text="{Binding PackedTotal}"
-                           FontSize="24"
+
+                    <Label Text="{Binding CurrentBoxCount}"
+                           FontSize="56"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="#7C6DFF" />
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame BackgroundColor="#1E1E1E"
-                   CornerRadius="16"
-                   Padding="16"
-                   HasShadow="False"
-                   Grid.Column="1">
+            <!-- STATS -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
 
-                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
-                    <Label Text="Boxes Completed"
-                           FontSize="13"
+                <Frame BackgroundColor="#1E1E1E"
+                       CornerRadius="16"
+                       Padding="16"
+                       HasShadow="False">
+
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Total Packed"
+                               FontSize="13"
+                               TextColor="#B0B0B0" />
+                        <Label Text="{Binding PackedTotal}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame BackgroundColor="#1E1E1E"
+                       CornerRadius="16"
+                       Padding="16"
+                       HasShadow="False">
+
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Boxes Completed"
+                               FontSize="13"
+                               TextColor="#B0B0B0" />
+                        <Label Text="{Binding BoxesCompleted}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White" />
+                    </VerticalStackLayout>
+                </Frame>
+
+            </Grid>
+
+            <!-- ADD ITEMS -->
+            <Frame BackgroundColor="#1E1E1E"
+                   CornerRadius="18"
+                   Padding="20"
+                   HasShadow="False">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Add Items to Box"
+                           FontSize="14"
                            TextColor="#B0B0B0" />
-                    <Label Text="{Binding BoxesCompleted}"
-                           FontSize="24"
-                           FontAttributes="Bold"
-                           TextColor="White" />
+
+                    <!-- PRESET BUTTONS -->
+                    <HorizontalStackLayout Spacing="12">
+                        <Button Text="+5"
+                                CommandParameter="5"
+                                Clicked="OnAddPresetClicked" />
+
+                        <Button Text="+10"
+                                CommandParameter="10"
+                                Clicked="OnAddPresetClicked" />
+
+                        <Button Text="+20"
+                                CommandParameter="20"
+                                Clicked="OnAddPresetClicked" />
+                    </HorizontalStackLayout>
+
+                    <!-- MANUAL ENTRY -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <Entry x:Name="ManualQuantityEntry"
+                               Placeholder="Enter quantity (e.g. 50)"
+                               Keyboard="Numeric"
+                               FontSize="18"
+                               TextColor="White" />
+
+                        <Button Text="Add"
+                                Clicked="OnAddManualClicked" />
+                    </Grid>
+
                 </VerticalStackLayout>
             </Frame>
 
-        </Grid>
+            <!-- FINISH -->
+            <Button Text="Finish Packing"
+                    FontSize="16"
+                    HeightRequest="50"
+                    CornerRadius="14"
+                    BackgroundColor="#2C2C2C"
+                    TextColor="#B0B0B0"
+                    Clicked="OnFinishClicked" />
 
-        <!-- PRIMARY ACTION -->
-        <Button Text="+1 ITEM"
-                FontSize="24"
-                HeightRequest="72"
-                CornerRadius="18"
-                BackgroundColor="#7C6DFF"
-                TextColor="White"
-                Clicked="OnAddItemClicked" />
-
-        <!-- SECONDARY ACTION -->
-        <Button Text="Finish Packing"
-                FontSize="16"
-                HeightRequest="50"
-                CornerRadius="14"
-                BackgroundColor="#2C2C2C"
-                TextColor="#B0B0B0"
-                Clicked="OnFinishClicked" />
-
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -4,52 +4,54 @@ namespace PackagingCountVerifier;
 
 public partial class PackingPage : ContentPage
 {
-    private readonly PackingJob job;
+    public PackingJob Job { get; }
+
+    // Safe presets for any box size
+    public List<int> Presets { get; } = new() { 1, 2, 5 };
 
     public PackingPage(PackingJob job)
     {
         InitializeComponent();
-        this.job = job;
-        BindingContext = job;
+
+        Job = job;
+
+        // ?? THIS is the correct BindingContext
+        BindingContext = this;
     }
 
-    // ?? Shared logic for adding items
     private async Task AddItemsAsync(int quantity)
     {
         if (quantity <= 0)
             return;
 
-        job.CurrentBoxCount += quantity;
-        job.PackedTotal += quantity;
+        Job.CurrentBoxCount += quantity;
+        Job.PackedTotal += quantity;
 
         // ?? OVERPACK PROTECTION
-        if (job.CurrentBoxCount > job.ItemsPerBox)
+        if (Job.CurrentBoxCount > Job.ItemsPerBox)
         {
-            await DisplayAlert(
-                "? Overpacked",
-                "This exceeds the box limit.\nRemove extra items before continuing.",
-                "OK");
+            await DisplayAlert("? Overpacked",
+                               "This exceeds the box limit.",
+                               "OK");
 
-            job.CurrentBoxCount -= quantity;
-            job.PackedTotal -= quantity;
+            Job.CurrentBoxCount -= quantity;
+            Job.PackedTotal -= quantity;
             return;
         }
 
         // ? BOX COMPLETE
-        if (job.CurrentBoxCount == job.ItemsPerBox)
+        if (Job.CurrentBoxCount == Job.ItemsPerBox)
         {
-            job.BoxesCompleted++;
+            Job.BoxesCompleted++;
 
-            await DisplayAlert(
-                "Box Complete",
-                "Box successfully packed.\nSeal the box and start a new one.",
-                "OK");
+            await DisplayAlert("Box Complete",
+                               "Box packed successfully.",
+                               "OK");
 
-            job.CurrentBoxCount = 0;
+            Job.CurrentBoxCount = 0;
         }
     }
 
-    // ? Preset buttons (+5 / +10 / +20)
     private async void OnAddPresetClicked(object sender, EventArgs e)
     {
         if (sender is Button btn &&
@@ -59,12 +61,13 @@ public partial class PackingPage : ContentPage
         }
     }
 
-    // ?? Manual quantity entry
     private async void OnAddManualClicked(object sender, EventArgs e)
     {
         if (!int.TryParse(ManualQuantityEntry.Text, out int qty) || qty <= 0)
         {
-            await DisplayAlert("Invalid Input", "Enter a valid quantity.", "OK");
+            await DisplayAlert("Invalid Input",
+                               "Enter a valid number.",
+                               "OK");
             return;
         }
 
@@ -72,9 +75,8 @@ public partial class PackingPage : ContentPage
         ManualQuantityEntry.Text = string.Empty;
     }
 
-    // ? Finish packing
     private async void OnFinishClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new VerificationPage(job));
+        await Navigation.PushAsync(new VerificationPage(Job));
     }
 }

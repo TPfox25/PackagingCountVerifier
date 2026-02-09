@@ -15,18 +15,18 @@
                    TextColor="White"
                    HorizontalOptions="Center" />
 
-            <!-- CURRENT BOX CARD -->
+            <!-- CURRENT BOX -->
             <Frame BackgroundColor="#1E1E1E"
                    CornerRadius="20"
                    Padding="24"
                    HasShadow="False">
 
-                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                <VerticalStackLayout HorizontalOptions="Center">
                     <Label Text="Current Box"
                            FontSize="14"
                            TextColor="#B0B0B0" />
 
-                    <Label Text="{Binding CurrentBoxCount}"
+                    <Label Text="{Binding Job.CurrentBoxCount}"
                            FontSize="56"
                            FontAttributes="Bold"
                            TextColor="#7C6DFF" />
@@ -45,7 +45,7 @@
                         <Label Text="Total Packed"
                                FontSize="13"
                                TextColor="#B0B0B0" />
-                        <Label Text="{Binding PackedTotal}"
+                        <Label Text="{Binding Job.PackedTotal}"
                                FontSize="24"
                                FontAttributes="Bold"
                                TextColor="White" />
@@ -61,7 +61,7 @@
                         <Label Text="Boxes Completed"
                                FontSize="13"
                                TextColor="#B0B0B0" />
-                        <Label Text="{Binding BoxesCompleted}"
+                        <Label Text="{Binding Job.BoxesCompleted}"
                                FontSize="24"
                                FontAttributes="Bold"
                                TextColor="White" />
@@ -82,31 +82,33 @@
                            FontSize="14"
                            TextColor="#B0B0B0" />
 
-                    <!-- PRESET BUTTONS -->
-                    <HorizontalStackLayout Spacing="12">
-                        <Button Text="+5"
-                                CommandParameter="5"
-                                Clicked="OnAddPresetClicked" />
+                    <!-- PRESETS -->
+                    <HorizontalStackLayout Spacing="12"
+                        BindableLayout.ItemsSource="{Binding Presets}">
 
-                        <Button Text="+10"
-                                CommandParameter="10"
-                                Clicked="OnAddPresetClicked" />
-
-                        <Button Text="+20"
-                                CommandParameter="20"
-                                Clicked="OnAddPresetClicked" />
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Button Text="{Binding StringFormat='+{0}'}"
+                                        CommandParameter="{Binding}"
+                                        Clicked="OnAddPresetClicked"
+                                        BackgroundColor="#7C6DFF"
+                                        TextColor="White"
+                                        CornerRadius="14"/>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
                     </HorizontalStackLayout>
 
                     <!-- MANUAL ENTRY -->
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                         <Entry x:Name="ManualQuantityEntry"
-                               Placeholder="Enter quantity (e.g. 50)"
+                               Placeholder="Enter quantity"
                                Keyboard="Numeric"
-                               FontSize="18"
-                               TextColor="White" />
+                               TextColor="White"/>
 
                         <Button Text="Add"
-                                Clicked="OnAddManualClicked" />
+                                Clicked="OnAddManualClicked"
+                                BackgroundColor="#7C6DFF"
+                                TextColor="White"/>
                     </Grid>
 
                 </VerticalStackLayout>
@@ -119,7 +121,8 @@
                     CornerRadius="14"
                     BackgroundColor="#2C2C2C"
                     TextColor="#B0B0B0"
-                    Clicked="OnFinishClicked" />
+                    Clicked="OnFinishClicked"
+                    IsEnabled="{Binding Job.CanFinishPacking}" />
 
         </VerticalStackLayout>
     </ScrollView>

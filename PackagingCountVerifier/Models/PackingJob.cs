@@ -12,11 +12,14 @@ namespace PackagingCountVerifier.Models
         private int itemsPerBox;
         private int packedTotal;
         private int boxesCompleted;
-        private int currentBoxCount;   // ✅ ADDED
+        private int currentBoxCount;
+
+        // 🔁 Undo support
+        private int lastAddedQuantity;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        void OnPropertyChanged([CallerMemberName] string? name = null)
+        private void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public string JobName
@@ -47,6 +50,7 @@ namespace PackagingCountVerifier.Models
                 expectedTotal = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ExpectedBoxes));
+                OnPropertyChanged(nameof(CanFinishPacking));
             }
         }
 
@@ -58,6 +62,7 @@ namespace PackagingCountVerifier.Models
                 itemsPerBox = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ExpectedBoxes));
+                OnPropertyChanged(nameof(CanFinishPacking));
             }
         }
 
@@ -81,6 +86,7 @@ namespace PackagingCountVerifier.Models
             {
                 packedTotal = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CanFinishPacking));
             }
         }
 
@@ -91,8 +97,27 @@ namespace PackagingCountVerifier.Models
             {
                 boxesCompleted = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CanFinishPacking));
             }
         }
+
+        // 🔁 Tracks last add (for Undo)
+        public int LastAddedQuantity
+        {
+            get => lastAddedQuantity;
+            set
+            {
+                lastAddedQuantity = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CanUndoLastAdd));
+            }
+        }
+
+        public bool CanUndoLastAdd => LastAddedQuantity > 0;
+
+        public bool CanFinishPacking =>
+            PackedTotal == ExpectedTotal &&
+            BoxesCompleted == ExpectedBoxes;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

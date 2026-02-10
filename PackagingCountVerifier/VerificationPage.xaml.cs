@@ -55,12 +55,12 @@ public partial class VerificationPage : ContentPage
        #endif
     }
 
-    private async void OnRestartClicked(object sender, EventArgs e)
+    private async void OnNewJobClicked(object sender, EventArgs e)
     {
         bool confirm = await DisplayAlert(
-            "Restart Job",
-            "This will clear all data and start a new job.",
-            "Restart",
+            "Start New Job",
+            "This will start a new job.",
+            "New Job",
             "Cancel");
 
         if (!confirm) return;

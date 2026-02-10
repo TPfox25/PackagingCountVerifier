@@ -6,119 +6,71 @@ namespace PackagingCountVerifier.Models
 {
     public class PackingJob : INotifyPropertyChanged
     {
-        private string jobName;
-        private string itemType;
-        private int expectedTotal;
-        private int itemsPerBox;
-        private int packedTotal;
-        private int boxesCompleted;
-        private int currentBoxCount;
-
-        // 🔁 Undo support
-        private int lastAddedQuantity;
+        string jobName;
+        string itemType;
+        int expectedTotal;
+        int itemsPerBox;
+        int packedTotal;
+        int boxesCompleted;
+        int currentBoxCount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
+        void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
+        // 🔹 METADATA (used by MainPage)
         public string JobName
         {
             get => jobName;
-            set
-            {
-                jobName = value;
-                OnPropertyChanged();
-            }
+            set { jobName = value; OnPropertyChanged(); }
         }
 
         public string ItemType
         {
             get => itemType;
-            set
-            {
-                itemType = value;
-                OnPropertyChanged();
-            }
+            set { itemType = value; OnPropertyChanged(); }
         }
 
+        // 🔹 PACKING RULES
         public int ExpectedTotal
         {
             get => expectedTotal;
-            set
-            {
-                expectedTotal = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(ExpectedBoxes));
-                OnPropertyChanged(nameof(CanFinishPacking));
-            }
+            set { expectedTotal = value; OnPropertyChanged(); OnPropertyChanged(nameof(ExpectedBoxes)); }
         }
 
         public int ItemsPerBox
         {
             get => itemsPerBox;
-            set
-            {
-                itemsPerBox = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(ExpectedBoxes));
-                OnPropertyChanged(nameof(CanFinishPacking));
-            }
+            set { itemsPerBox = value; OnPropertyChanged(); OnPropertyChanged(nameof(ExpectedBoxes)); }
         }
 
         public int ExpectedBoxes =>
-            ItemsPerBox <= 0 ? 0 : ExpectedTotal / ItemsPerBox;
+            ItemsPerBox <= 0 ? 0 : (int)Math.Ceiling((double)ExpectedTotal / ItemsPerBox);
 
-        public int CurrentBoxCount
-        {
-            get => currentBoxCount;
-            set
-            {
-                currentBoxCount = value;
-                OnPropertyChanged();
-            }
-        }
-
+        // 🔹 LIVE STATE
         public int PackedTotal
         {
             get => packedTotal;
-            set
-            {
-                packedTotal = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(CanFinishPacking));
-            }
+            set { packedTotal = value; OnPropertyChanged(); }
         }
 
         public int BoxesCompleted
         {
             get => boxesCompleted;
-            set
-            {
-                boxesCompleted = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(CanFinishPacking));
-            }
+            set { boxesCompleted = value; OnPropertyChanged(); }
         }
 
-        // 🔁 Tracks last add (for Undo)
-        public int LastAddedQuantity
+        public int CurrentBoxCount
         {
-            get => lastAddedQuantity;
-            set
-            {
-                lastAddedQuantity = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(CanUndoLastAdd));
-            }
+            get => currentBoxCount;
+            set { currentBoxCount = value; OnPropertyChanged(); }
         }
 
-        public bool CanUndoLastAdd => LastAddedQuantity > 0;
+        public int RemainingItems =>
+            Math.Max(0, ExpectedTotal - PackedTotal);
 
-        public bool CanFinishPacking =>
+        public bool IsJobComplete =>
             PackedTotal == ExpectedTotal &&
             BoxesCompleted == ExpectedBoxes;
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

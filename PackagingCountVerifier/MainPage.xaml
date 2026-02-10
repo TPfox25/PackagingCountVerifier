@@ -81,7 +81,7 @@
             </Frame>
 
             <!-- PRIMARY ACTION -->
-            <Button Text="Start Packing"
+            <Button Text="Next"
                     FontSize="18"
                     HeightRequest="56"
                     CornerRadius="14"

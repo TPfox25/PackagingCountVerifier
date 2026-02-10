@@ -6,16 +6,13 @@ public partial class PackingPage : ContentPage
 {
     public PackingJob Job { get; }
 
-    // Safe presets for any box size
+    // Safe presets
     public List<int> Presets { get; } = new() { 1, 2, 5 };
 
     public PackingPage(PackingJob job)
     {
         InitializeComponent();
-
         Job = job;
-
-        // ?? THIS is the correct BindingContext
         BindingContext = this;
     }
 
@@ -24,18 +21,30 @@ public partial class PackingPage : ContentPage
         if (quantity <= 0)
             return;
 
+        // ?? JOB TOTAL PROTECTION
+        if (Job.PackedTotal + quantity > Job.ExpectedTotal)
+        {
+            await DisplayAlert(
+                "Limit Reached",
+                $"Only {Job.RemainingItems} items remaining in this job.",
+                "OK");
+            return;
+        }
+
+        // Tentatively add
         Job.CurrentBoxCount += quantity;
         Job.PackedTotal += quantity;
 
-        // ?? OVERPACK PROTECTION
+        // ?? BOX OVERFLOW PROTECTION
         if (Job.CurrentBoxCount > Job.ItemsPerBox)
         {
-            await DisplayAlert("? Overpacked",
-                               "This exceeds the box limit.",
-                               "OK");
-
             Job.CurrentBoxCount -= quantity;
             Job.PackedTotal -= quantity;
+
+            await DisplayAlert(
+                "Overpacked Box",
+                "This exceeds the box capacity.",
+                "OK");
             return;
         }
 
@@ -44,11 +53,22 @@ public partial class PackingPage : ContentPage
         {
             Job.BoxesCompleted++;
 
-            await DisplayAlert("Box Complete",
-                               "Box packed successfully.",
-                               "OK");
+            int completedBoxNumber = Job.BoxesCompleted;
 
+            // Reset for next box
             Job.CurrentBoxCount = 0;
+
+            // ?? SAFETY: stop extra boxes
+            if (Job.BoxesCompleted > Job.ExpectedBoxes)
+                Job.BoxesCompleted = Job.ExpectedBoxes;
+
+            // ? USER FEEDBACK (THIS IS THE KEY PART)
+            await DisplayAlert(
+                "? Box Completed",
+                $"Box #{completedBoxNumber} packed successfully.\n\n" +
+                $"Items per box: {Job.ItemsPerBox}\n" +
+                $"Total packed: {Job.PackedTotal}/{Job.ExpectedTotal}",
+                "OK");
         }
     }
 
@@ -65,9 +85,7 @@ public partial class PackingPage : ContentPage
     {
         if (!int.TryParse(ManualQuantityEntry.Text, out int qty) || qty <= 0)
         {
-            await DisplayAlert("Invalid Input",
-                               "Enter a valid number.",
-                               "OK");
+            await DisplayAlert("Invalid Input", "Enter a valid number.", "OK");
             return;
         }
 
@@ -77,6 +95,15 @@ public partial class PackingPage : ContentPage
 
     private async void OnFinishClicked(object sender, EventArgs e)
     {
+        if (!Job.IsJobComplete)
+        {
+            await DisplayAlert(
+                "Job Incomplete",
+                $"Remaining items: {Job.RemainingItems}",
+                "OK");
+            return;
+        }
+
         await Navigation.PushAsync(new VerificationPage(Job));
     }
 }

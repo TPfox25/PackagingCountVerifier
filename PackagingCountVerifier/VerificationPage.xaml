@@ -37,13 +37,13 @@
                 Clicked="OnCloseAppClicked" />
 
         <!-- SECONDARY ACTION: RESTART -->
-        <Button Text="Restart Job"
+        <Button Text="Start New Job"
                 FontSize="16"
                 HeightRequest="48"
                 CornerRadius="14"
                 BackgroundColor="#2C2C2C"
                 TextColor="#B0B0B0"
-                Clicked="OnRestartClicked" />
+                Clicked="OnNewJobClicked" />
 
     </VerticalStackLayout>
 </ContentPage>

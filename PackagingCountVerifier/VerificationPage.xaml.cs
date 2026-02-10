@@ -21,7 +21,7 @@ public partial class VerificationPage : ContentPage
 
         if (totalMatch && boxMatch)
         {
-            ResultLabel.Text = "?? MATCH CONFIRMED\nAll items accounted for.";
+            ResultLabel.Text = "COUNT SUCCESSFUL\nAll items accounted for.";
             ResultLabel.TextColor = Colors.Green;
         }
         else

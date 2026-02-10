@@ -15,6 +15,20 @@
                    TextColor="White"
                    HorizontalOptions="Center" />
 
+            <!-- ✅ BOX COMPLETED BANNER (NON-BLOCKING) -->
+            <Frame x:Name="BoxCompletedBanner"
+                   IsVisible="False"
+                   BackgroundColor="#1E3A2F"
+                   CornerRadius="16"
+                   Padding="14"
+                   HasShadow="False">
+
+                <Label x:Name="BoxCompletedLabel"
+                       FontSize="14"
+                       TextColor="#7CFFB2"
+                       HorizontalTextAlignment="Center" />
+            </Frame>
+
             <!-- CURRENT BOX -->
             <Frame BackgroundColor="#1E1E1E"
                    CornerRadius="20"
@@ -99,7 +113,7 @@
                         </BindableLayout.ItemTemplate>
                     </HorizontalStackLayout>
 
-                    <!-- MANUAL ENTRY (FIXED) -->
+                    <!-- MANUAL ENTRY -->
                     <VerticalStackLayout Spacing="10">
 
                         <Label Text="Manual Quantity"

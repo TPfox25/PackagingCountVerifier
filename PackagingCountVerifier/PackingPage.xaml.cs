@@ -6,7 +6,6 @@ public partial class PackingPage : ContentPage
 {
     public PackingJob Job { get; }
 
-    // Safe presets
     public List<int> Presets { get; } = new() { 1, 2, 5 };
 
     public PackingPage(PackingJob job)
@@ -14,6 +13,20 @@ public partial class PackingPage : ContentPage
         InitializeComponent();
         Job = job;
         BindingContext = this;
+    }
+
+    private async Task ShowBoxCompletedBanner(int boxNumber)
+    {
+        BoxCompletedLabel.Text =
+            $"? Box #{boxNumber} completed • " +
+            $"{Job.ItemsPerBox} items • " +
+            $"{Job.PackedTotal}/{Job.ExpectedTotal} packed";
+
+        BoxCompletedBanner.IsVisible = true;
+
+        await Task.Delay(3500);
+
+        BoxCompletedBanner.IsVisible = false;
     }
 
     private async Task AddItemsAsync(int quantity)
@@ -26,12 +39,12 @@ public partial class PackingPage : ContentPage
         {
             await DisplayAlert(
                 "Limit Reached",
-                $"Only {Job.RemainingItems} items remaining in this job.",
+                $"Only {Job.RemainingItems} items remaining.",
                 "OK");
             return;
         }
 
-        // Tentatively add
+        // Tentative add
         Job.CurrentBoxCount += quantity;
         Job.PackedTotal += quantity;
 
@@ -52,23 +65,14 @@ public partial class PackingPage : ContentPage
         if (Job.CurrentBoxCount == Job.ItemsPerBox)
         {
             Job.BoxesCompleted++;
-
             int completedBoxNumber = Job.BoxesCompleted;
 
-            // Reset for next box
             Job.CurrentBoxCount = 0;
 
-            // ?? SAFETY: stop extra boxes
             if (Job.BoxesCompleted > Job.ExpectedBoxes)
                 Job.BoxesCompleted = Job.ExpectedBoxes;
 
-            // ? USER FEEDBACK (THIS IS THE KEY PART)
-            await DisplayAlert(
-                "? Box Completed",
-                $"Box #{completedBoxNumber} packed successfully.\n\n" +
-                $"Items per box: {Job.ItemsPerBox}\n" +
-                $"Total packed: {Job.PackedTotal}/{Job.ExpectedTotal}",
-                "OK");
+            await ShowBoxCompletedBanner(completedBoxNumber);
         }
     }
 

@@ -18,6 +18,10 @@ namespace PackagingCountVerifier.Models
         void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         // 🔹 METADATA (used by MainPage)
         public string JobName
         {

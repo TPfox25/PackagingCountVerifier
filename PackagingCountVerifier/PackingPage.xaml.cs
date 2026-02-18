@@ -1,4 +1,6 @@
 using PackagingCountVerifier.Models;
+using PackagingCountVerifier.Data;
+using PackagingCountVerifier.Data.Entities;
 
 namespace PackagingCountVerifier;
 
@@ -6,12 +8,21 @@ public partial class PackingPage : ContentPage
 {
     public PackingJob Job { get; }
 
+    private readonly AppDatabase _db;
+
     public List<int> Presets { get; } = new() { 1, 2, 5 };
 
     public PackingPage(PackingJob job)
     {
         InitializeComponent();
+
         Job = job;
+
+        _db = Application.Current!.Handler
+                .MauiContext!
+                .Services
+                .GetService<AppDatabase>()!;
+
         BindingContext = this;
     }
 
@@ -24,7 +35,7 @@ public partial class PackingPage : ContentPage
 
         BoxCompletedBanner.IsVisible = true;
 
-        await Task.Delay(3500);
+        await Task.Delay(3000);
 
         BoxCompletedBanner.IsVisible = false;
     }
@@ -72,6 +83,15 @@ public partial class PackingPage : ContentPage
             if (Job.BoxesCompleted > Job.ExpectedBoxes)
                 Job.BoxesCompleted = Job.ExpectedBoxes;
 
+            // ?? SAVE TO DATABASE
+            await _db.InsertBoxAsync(new BoxHistoryEntity
+            {
+                PackingJobId = Job.Id,
+                BoxNumber = completedBoxNumber,
+                ItemsInBox = Job.ItemsPerBox,
+                PackedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            });
+
             await ShowBoxCompletedBanner(completedBoxNumber);
         }
     }
@@ -108,6 +128,7 @@ public partial class PackingPage : ContentPage
             return;
         }
 
-        await Navigation.PushAsync(new VerificationPage(Job));
+        await Navigation.PushAsync(
+            new VerificationPage(Job, _db));
     }
 }

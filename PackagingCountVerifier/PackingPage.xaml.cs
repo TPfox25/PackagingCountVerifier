@@ -45,32 +45,19 @@ public partial class PackingPage : ContentPage
         if (quantity <= 0)
             return;
 
-        // ?? JOB TOTAL PROTECTION
-        if (Job.PackedTotal + quantity > Job.ExpectedTotal)
+        // ?? BOX OVERFLOW PROTECTION ONLY
+        if (Job.CurrentBoxCount + quantity > Job.ItemsPerBox)
         {
-            await DisplayAlert(
-                "Limit Reached",
-                $"Only {Job.RemainingItems} items remaining.",
-                "OK");
-            return;
-        }
-
-        // Tentative add
-        Job.CurrentBoxCount += quantity;
-        Job.PackedTotal += quantity;
-
-        // ?? BOX OVERFLOW PROTECTION
-        if (Job.CurrentBoxCount > Job.ItemsPerBox)
-        {
-            Job.CurrentBoxCount -= quantity;
-            Job.PackedTotal -= quantity;
-
             await DisplayAlert(
                 "Overpacked Box",
                 "This exceeds the box capacity.",
                 "OK");
             return;
         }
+
+        // Add items
+        Job.CurrentBoxCount += quantity;
+        Job.PackedTotal += quantity;
 
         // ? BOX COMPLETE
         if (Job.CurrentBoxCount == Job.ItemsPerBox)
@@ -79,9 +66,6 @@ public partial class PackingPage : ContentPage
             int completedBoxNumber = Job.BoxesCompleted;
 
             Job.CurrentBoxCount = 0;
-
-            if (Job.BoxesCompleted > Job.ExpectedBoxes)
-                Job.BoxesCompleted = Job.ExpectedBoxes;
 
             // ?? SAVE TO DATABASE
             await _db.InsertBoxAsync(new BoxHistoryEntity
@@ -95,6 +79,7 @@ public partial class PackingPage : ContentPage
             await ShowBoxCompletedBanner(completedBoxNumber);
         }
     }
+
 
     private async void OnAddPresetClicked(object sender, EventArgs e)
     {
@@ -119,16 +104,39 @@ public partial class PackingPage : ContentPage
 
     private async void OnFinishClicked(object sender, EventArgs e)
     {
-        if (!Job.IsJobComplete)
+        bool totalMatch = Job.PackedTotal == Job.ExpectedTotal;
+        bool boxMatch = Job.BoxesCompleted == Job.ExpectedBoxes;
+
+        // ?? TRUE INCOMPLETE (still items missing)
+        if (Job.PackedTotal < Job.ExpectedTotal)
         {
             await DisplayAlert(
                 "Job Incomplete",
-                $"Remaining items: {Job.RemainingItems}",
+                $"Remaining items: {Job.ExpectedTotal - Job.PackedTotal}",
                 "OK");
+
             return;
         }
 
+        // ? MISMATCH WARNING
+        if (!totalMatch || !boxMatch)
+        {
+            bool proceed = await DisplayAlert(
+                "? Verification Warning",
+                $"Totals do not match.\n\n" +
+                $"Packed: {Job.PackedTotal}/{Job.ExpectedTotal}\n" +
+                $"Boxes: {Job.BoxesCompleted}/{Job.ExpectedBoxes}\n\n" +
+                "Continue to verification?",
+                "Continue",
+                "Cancel");
+
+            if (!proceed)
+                return;
+        }
+
+        // ? Go to verification regardless
         await Navigation.PushAsync(
             new VerificationPage(Job, _db));
     }
+
 }

@@ -41,7 +41,7 @@
                                FontSize="13"
                                TextColor="#B0B0B0" />
 
-                        <Entry Placeholder="e.g. Party Rally Shirts – Durban"
+                        <Entry Placeholder="e.g. Mr Price Shirts – Durban"
                                Text="{Binding JobName}"
                                FontSize="16"
                                TextColor="White" />
